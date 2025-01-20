@@ -1,0 +1,8 @@
+<!-- step 1: get all the slots -->
+<!-- https://hjv2pvkv-3001.inc1.devtunnels.ms/v1/slots/getByClinicId/425cf02a-c3ca-41e5-b1ca-bf319c0da672 -->
+
+<!-- step 2: get all blocked dates and slots -->
+<!-- https://hjv2pvkv-3001.inc1.devtunnels.ms/v1/block-slots/getByClinicId/425cf02a-c3ca-41e5-b1ca-bf319c0da672?type=& -->
+
+<!-- step 3: get blocked slots by date and clinic id -->
+<!-- https://hjv2pvkv-3001.inc1.devtunnels.ms/v1/block-slots/getByDateAndClinic?clinic=425cf02a-c3ca-41e5-b1ca-bf319c0da672&date=2024-12-20 -->
