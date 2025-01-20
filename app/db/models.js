@@ -11,6 +11,7 @@ import customerModel from "./models/customer.model.js";
 import investmentModel from "./models/investment.model.js";
 import transactionModel from "./models/transaction.model.js";
 import blogModel from "./models/blog.model.js";
+import queryModel from "./models/query.model.js";
 
 export default {
   UserModel: userModel,
@@ -26,4 +27,5 @@ export default {
   InvestmentModel: investmentModel,
   TransactionModel: transactionModel,
   BlogModel: blogModel,
+  QueryModel: queryModel,
 };

@@ -55,6 +55,8 @@ const constants = {
     INVESTMENT_TABLE: "investments",
     TRANSACTION_TABLE: "transactions",
     BLOG_TABLE: "blogs",
+    ENQUIRY_TABLE: "enquiries",
+    QUERY_TABLE: "queries",
   },
   bcrypt: {
     SALT_ROUNDS: 10,

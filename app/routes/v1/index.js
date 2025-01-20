@@ -7,6 +7,7 @@ import eventRoutes from "../../api/event/routes.js";
 import investmentRoutes from "../../api/investment/routes.js";
 import transactionRoutes from "../../api/transaction/routes.js";
 import blogRoutes from "../../api/blog/routes.js";
+import queryRoutes from "../../api/query/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -21,4 +22,5 @@ export default async function routes(fastify, options) {
   fastify.register(investmentRoutes, { prefix: "investments" });
   fastify.register(transactionRoutes, { prefix: "transactions" });
   fastify.register(blogRoutes, { prefix: "blogs" });
+  fastify.register(queryRoutes, { prefix: "queries" });
 }

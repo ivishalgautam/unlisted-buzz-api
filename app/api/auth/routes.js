@@ -7,7 +7,6 @@ export default async function routes(fastify, options) {
     request.body && console.log("body", request.body);
   });
   fastify.post("/login", {}, controller.verifyUserCredentials);
-  fastify.post("/login/user", {}, controller.verifyUserCredentials);
   fastify.post("/otp", {}, controller.otpSend);
   fastify.post("/signup", {}, controller.createNewUser);
   fastify.post("/refresh", {}, controller.verifyRefreshToken);

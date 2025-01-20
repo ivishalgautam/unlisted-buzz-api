@@ -17,7 +17,7 @@ const update = async (req, res) => {
     const record = await table.BlogModel.getById(req);
     if (!record) return res.code(404).send({ message: "Blog not found!" });
 
-    // req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
+    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
     res.send(await table.BlogModel.update(req));
   } catch (error) {
     console.error(error);

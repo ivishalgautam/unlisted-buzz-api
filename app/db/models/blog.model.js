@@ -39,7 +39,7 @@ const init = async (sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      shares: {
+      sectors: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
@@ -73,12 +73,12 @@ const create = async (req) => {
   return await BlogModel.create(
     {
       title: req.body.title,
-      slug: String(req.body.slug).toLowerCase(),
+      slug: req.body.slug.toLowerCase(),
       image: req.body.image,
       short_description: req.body.short_description,
       content: req.body.content,
       is_active: req.body.is_active,
-      shares: req.body.shares,
+      sectors: req.body.sectors,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -120,17 +120,17 @@ const get = async (req) => {
   SELECT 
       b.id, b.title, b.image, b.slug, b.short_description, b.created_at, b.updated_at,
       CASE
-        WHEN COUNT(shr.id) > 0 THEN json_agg(
+        WHEN COUNT(sec.id) > 0 THEN json_agg(
             json_build_object(
-            'id', shr.id, 
-            'name', shr.name,
-            'slug', shr.slug
+            'id', sec.id, 
+            'name', sec.name,
+            'slug', sec.slug
             )
         )
         ELSE '[]'
-      END AS shares
+      END AS sectors
     FROM ${constants.models.BLOG_TABLE} b
-    LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = ANY(b.shares)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sec ON sec.id = ANY(b.sectors)
     ${whereClause}
     GROUP BY
         b.id
@@ -157,10 +157,10 @@ const update = async (req, id) => {
   const [rowCount, rows] = await BlogModel.update(
     {
       title: req.body.title,
-      slug: String(req.body.slug).toLowerCase(),
+      slug: req.body.slug.toLowerCase(),
       image: req.body.image,
       short_description: req.body.short_description,
-      shares: req.body.shares,
+      sectors: req.body.sectors,
       content: req.body.content,
       is_active: req.body.is_active,
       meta_title: req.body.meta_title,
@@ -202,10 +202,10 @@ const getBySlug = async (req, slug) => {
               )
           )
           ELSE '[]'
-      END AS categories
+      END AS sectors
     FROM
       ${constants.models.BLOG_TABLE} b
-    LEFT JOIN categories cat ON cat.id = ANY(b.categories)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} cat ON cat.id = ANY(b.sectors)
     WHERE b.slug = '${req.params.slug || slug}'
     GROUP BY
       b.id
@@ -233,8 +233,8 @@ const getRelatedBlogs = async (req, id) => {
     WHERE b1.id = '${req.params.id || id}'
       AND (
         SELECT COUNT(*)
-        FROM unnest(b1.categories) AS cat1
-        JOIN unnest(b2.categories) AS cat2 ON cat1 = cat2
+        FROM unnest(b1.sectors) AS sec1
+        JOIN unnest(b2.sectors) AS sec2 ON sec1 = sec2
       ) > 0;
   `;
 
