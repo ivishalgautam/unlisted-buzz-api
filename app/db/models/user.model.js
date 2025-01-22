@@ -67,7 +67,7 @@ const init = async (sequelize) => {
       },
       dob: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: true,
       },
       avatar: {
         type: DataTypes.TEXT,
@@ -97,7 +97,6 @@ const create = async (req, { transaction }) => {
       // mobile_number: req.body?.mobile_number,
       country_code: req.body.country_code,
       role: req.body.role,
-      dob: req.body.dob,
     },
     { transaction }
   );
