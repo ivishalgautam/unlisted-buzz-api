@@ -92,11 +92,12 @@ const init = async (sequelize) => {
 const create = async (req, { transaction }) => {
   const data = await UserModel.create(
     {
-      fullname: req.body?.fullname,
-      email: req.body?.email,
-      mobile_number: req.body?.mobile_number,
-      country_code: req.body?.country_code,
-      role: req.body?.role,
+      fullname: req.body.fullname,
+      email: req.body.email,
+      // mobile_number: req.body?.mobile_number,
+      country_code: req.body.country_code,
+      role: req.body.role,
+      dob: req.body.dob,
     },
     { transaction }
   );
