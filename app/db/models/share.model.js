@@ -230,12 +230,13 @@ const get = async (req) => {
       FROM ${constants.models.SHARE_PRICE_HISTORY_TABLE} sp
       WHERE sp.share_id = shr.id
       ORDER BY sp.created_at ASC
-      LIMIT 1) AS first_price
+      LIMIT 1) AS first_price,
+      sct.name as sector_name
     FROM ${constants.models.SHARE_TABLE} shr
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = shr.sector_id
     ${whereClause}
     GROUP BY
-      shr.id
+      shr.id, sct.name
     ORDER BY shr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;

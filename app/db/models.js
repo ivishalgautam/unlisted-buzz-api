@@ -12,6 +12,7 @@ import investmentModel from "./models/investment.model.js";
 import transactionModel from "./models/transaction.model.js";
 import blogModel from "./models/blog.model.js";
 import queryModel from "./models/query.model.js";
+import commentModel from "./models/comment.model.js";
 
 export default {
   UserModel: userModel,
@@ -28,4 +29,5 @@ export default {
   TransactionModel: transactionModel,
   BlogModel: blogModel,
   QueryModel: queryModel,
+  CommentModel: commentModel,
 };
