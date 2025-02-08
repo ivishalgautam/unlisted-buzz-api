@@ -361,6 +361,7 @@ const update = async (req, id, { transaction }) => {
       is_ipo: req.body.is_ipo,
       image: req.body.image,
       about: req.body.about,
+      sector_id: req.body.sector_id,
       fundamentals: req.body.fundamentals,
       shareholding_patterns: req.body.shareholding_patterns,
       peer_ratio: req.body.peer_ratio,

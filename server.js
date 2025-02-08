@@ -22,6 +22,7 @@ import { ErrorHandler } from "./app/helpers/error-handler.js";
 // other modules
 import ejs from "ejs";
 import publcRoutes from "./app/routes/v1/public.js";
+import multer from "fastify-multer";
 
 /*
   Register External packages, routes, database connection
@@ -49,6 +50,7 @@ export default (app) => {
   app.register(fastifyMultipart, {
     limits: { fileSize: 5 * 1024 * 1024 * 1024 }, // Set the limit to 5 GB or adjust as needed
   });
+  // app.register(multer.contentParser);
   // Increase the payload size limit
   app.register(routes, { prefix: "v1" });
   app.register(publcRoutes, { prefix: "v1" });

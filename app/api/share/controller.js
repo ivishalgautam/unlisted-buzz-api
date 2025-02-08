@@ -7,6 +7,9 @@ import { sequelize } from "../../db/postgres.js";
 import { sharePriceSchema } from "../../validation-schemas/share-price.schema.js";
 import { ipoSchema } from "../../validation-schemas/ipo.model.js";
 const { BAD_REQUEST, NOT_FOUND } = constants.http.status;
+import fs from "fs";
+import csv from "csv-parser";
+import { parseObj } from "../../helpers/parse-object.js";
 
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -228,6 +231,65 @@ const deleteById = async (req, res) => {
   }
 };
 
+async function getFormattedShareDetails(req, res) {
+  // const processRow = async (data) => {
+  //   const parsedData = {
+  //     fundamentals: JSON.parse(data.fundamentals),
+  //     shareholding_patterns: JSON.parse(data.shareholding_patterns),
+  //     peer_ratio: parseObj(data.peer_ratio),
+  //     financials: JSON.parse(data.financials),
+  //     faqs: JSON.parse(data.faqs),
+  //     promoters_or_management: JSON.parse(data.promoters_or_management),
+  //   };
+
+  //   req.body = { ...parsedData };
+  //   await table.ShareModel.update(req);
+  // };
+
+  try {
+    // const record = await table.ShareModel.getById(req);
+    // if (!record) return res.code(404).send({ message: "Share not found!" });
+
+    if (!req.file) {
+      return res.code(400).send({ message: "No file uploaded." });
+    }
+
+    let results = {};
+
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on("data", async (data) => {
+          for (const [key, value] of Object.entries(data)) {
+            results[key] =
+              key === "peer_ratio" ? parseObj(value) : JSON.parse(value);
+          }
+          // results = {
+          //   fundamentals: JSON.parse(data.fundamentals),
+          //   shareholding_patterns: JSON.parse(data.shareholding_patterns),
+          //   peer_ratio: parseObj(data.peer_ratio),
+          //   financials: JSON.parse(data.financials),
+          //   faqs: JSON.parse(data.faqs),
+          //   promoters_or_management: JSON.parse(data.promoters_or_management),
+          // };
+        })
+        .on("end", () => {
+          resolve();
+          fs.unlinkSync(req.file.path);
+        })
+        .on("error", (error) => {
+          reject();
+          fs.unlinkSync(req.file.path);
+        });
+    });
+
+    res.send({ message: "Customers imported successfully", data: results });
+  } catch (error) {
+    console.log(error);
+    res.code(500).send({ message: error.message });
+  }
+}
+
 export default {
   create: create,
   get: get,
@@ -238,4 +300,5 @@ export default {
   getById: getById,
   getChartByShareId: getChartByShareId,
   getNewArrivals: getNewArrivals,
+  getFormattedShareDetails: getFormattedShareDetails,
 };
