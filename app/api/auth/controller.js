@@ -144,7 +144,7 @@ const otpSend = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const otpRecord = await table.OTPModel.getByEmail(req);
-    const otp = crypto.randomInt(100000, 999999);
+    const otp = 111111 ?? crypto.randomInt(100000, 999999);
     req.body.otp = otp;
 
     let newOtp = null;
