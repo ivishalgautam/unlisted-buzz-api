@@ -136,7 +136,7 @@ const get = async (req) => {
 
   const query = `
   SELECT 
-    usr.id, usr.fullname,  usr.mobile_number, usr.email, usr.role, usr.is_active, usr.created_at
+    usr.id, usr.fullname,   usr.email, usr.role, usr.is_active, usr.created_at
   FROM ${constants.models.USER_TABLE} usr
   ${whereClause}
   ORDER BY usr.created_at DESC
@@ -167,9 +167,15 @@ const get = async (req) => {
 };
 
 const getById = async (req, id) => {
-  return await UserModel.findOne({
+  const data = await UserModel.findOne({
     where: { id: req?.params?.id || id },
+    raw: true,
   });
+
+  delete data.reset_password_token;
+  delete data.confirmation_token;
+
+  return data;
 };
 
 const getByMobile = async (req, mobile_number) => {
@@ -180,6 +186,8 @@ const getByMobile = async (req, mobile_number) => {
 
 const getByPk = async (req, id) => {
   const data = await UserModel.findByPk(req?.params?.id || id);
+  console.log({ id, data });
+  return;
 
   delete data.dataValues.reset_password_token;
   delete data.dataValues.confirmation_token;

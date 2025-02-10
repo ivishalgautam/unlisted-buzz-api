@@ -37,7 +37,7 @@ const verifyToken = async (req, res) => {
   }
   try {
     const decoded = jwt.verify(token, config.jwt_secret);
-    const userData = await table.UserModel.getByPk(0, decoded.user.id);
+    const userData = await table.UserModel.getById(0, decoded.user.id);
     req.user_data = userData;
     req.decoded = decoded;
   } catch (error) {
