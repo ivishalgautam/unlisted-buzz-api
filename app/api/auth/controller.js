@@ -31,7 +31,7 @@ const verifyUserCredentials = async (req, res) => {
       adminRecord = await table.AdminModel.getByUsername(req);
       if (!adminRecord)
         return res.code(404).send({ message: "User not found!" });
-      userData = await table.UserModel.getByPk(0, adminRecord.user_id);
+      userData = await table.UserModel.getById(0, adminRecord.user_id);
       if (!userData) {
         return res
           .code(404)
