@@ -77,22 +77,12 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const record = await table.UserModel.getByPk(req);
+    const record = await table.UserModel.getById(req);
     if (!record) {
       return res.code(404).send({ status: false, message: "User not exists" });
     }
 
     const user = await table.UserModel.update(req, 0, { transaction });
-    if (user.role === "doctor") {
-      const doctor = await table.DoctorModel.updateByUserId(req, user.id, {
-        transaction,
-      });
-    }
-    if (user.role === "patient") {
-      const patient = await table.PatientModel.updateByUserId(req, user.id, {
-        transaction,
-      });
-    }
 
     if (user && req.body.password) {
       req.body.new_password = req.body.password;
