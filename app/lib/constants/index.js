@@ -57,6 +57,7 @@ const constants = {
     BLOG_TABLE: "blogs",
     ENQUIRY_TABLE: "enquiries",
     QUERY_TABLE: "queries",
+    ENQUIRY_TABLE: "enquiries",
     COMMENT_TABLE: "comments",
   },
   bcrypt: {

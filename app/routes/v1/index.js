@@ -9,6 +9,7 @@ import transactionRoutes from "../../api/transaction/routes.js";
 import blogRoutes from "../../api/blog/routes.js";
 import queryRoutes from "../../api/query/routes.js";
 import commentRoutes from "../../api/comment/routes.js";
+import enquiryRoutes from "../../api/enquiry/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -25,4 +26,5 @@ export default async function routes(fastify, options) {
   fastify.register(blogRoutes, { prefix: "blogs" });
   fastify.register(queryRoutes, { prefix: "queries" });
   fastify.register(commentRoutes, { prefix: "comments" });
+  fastify.register(enquiryRoutes, { prefix: "enquiries" });
 }

@@ -13,6 +13,7 @@ import transactionModel from "./models/transaction.model.js";
 import blogModel from "./models/blog.model.js";
 import queryModel from "./models/query.model.js";
 import commentModel from "./models/comment.model.js";
+import enquiryModel from "./models/enquiry.model.js";
 
 export default {
   UserModel: userModel,
@@ -30,4 +31,5 @@ export default {
   BlogModel: blogModel,
   QueryModel: queryModel,
   CommentModel: commentModel,
+  EnquiryModel: enquiryModel,
 };
