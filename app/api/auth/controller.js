@@ -142,7 +142,12 @@ const createNewUser = async (req, res) => {
 
 const otpSend = async (req, res) => {
   const transaction = await sequelize.transaction();
+
   try {
+    const record = await table.UserModel.getByEmailId(req);
+    if (!record)
+      return res.code(404).send({ status: false, message: "User not exist." });
+
     const otpRecord = await table.OTPModel.getByEmail(req);
     const otp = 111111 ?? crypto.randomInt(100000, 999999);
     req.body.otp = otp;
