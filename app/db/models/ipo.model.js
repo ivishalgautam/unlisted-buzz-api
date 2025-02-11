@@ -18,6 +18,10 @@ const init = async (sequelize) => {
       ipo_price: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
       },
       share_id: {
         type: DataTypes.UUID,

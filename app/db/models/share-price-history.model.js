@@ -33,6 +33,10 @@ const init = async (sequelize) => {
       price: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
       },
       date: {
         type: DataTypes.DATEONLY,

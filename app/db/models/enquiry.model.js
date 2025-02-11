@@ -36,10 +36,18 @@ const init = async (sequelize) => {
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
       },
       price_per_share: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
       },
       message: {
         type: DataTypes.TEXT,

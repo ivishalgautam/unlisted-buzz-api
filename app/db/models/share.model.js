@@ -48,8 +48,22 @@ const init = async (sequelize) => {
       peer_ratio: { type: DataTypes.JSONB, defaultValue: {} },
       financials: { type: DataTypes.JSONB, defaultValue: [] },
       faqs: { type: DataTypes.JSONB, defaultValue: [] },
-      price: { type: DataTypes.INTEGER, allowNull: false },
-      current_market_price: { type: DataTypes.INTEGER, allowNull: false },
+      price: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
+      },
+      current_market_price: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        validate: {
+          max: 2147483647,
+          min: -2147483648,
+        },
+      },
       promoters_or_management: { type: DataTypes.JSONB, defaultValue: [] },
       is_ipo: { type: DataTypes.BOOLEAN, defaultValue: false },
       is_drhp_filed: { type: DataTypes.BOOLEAN, defaultValue: false },
