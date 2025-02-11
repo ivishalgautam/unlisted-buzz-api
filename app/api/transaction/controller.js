@@ -15,7 +15,6 @@ const create = async (req, res) => {
       0,
       validateData.investment_id
     );
-
     if (!investement)
       return res
         .code(404)

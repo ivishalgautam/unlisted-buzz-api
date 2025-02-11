@@ -260,6 +260,7 @@ async function getFormattedShareDetails(req, res) {
       fs.createReadStream(req.file.path)
         .pipe(csv())
         .on("data", async (data) => {
+          console.log(JSON.stringify(data));
           for (const [key, value] of Object.entries(data)) {
             results[key] =
               key === "peer_ratio" ? parseObj(value) : JSON.parse(value);
