@@ -172,7 +172,7 @@ const get = async (req) => {
 
   let query = `
     SELECT
-      shr.id, shr.slug, shr.name, shr.image, shr.price, shr.current_market_price,
+      shr.id, shr.slug, shr.name, shr.image, shr.price, shr.current_market_price, shr.created_at,
       COALESCE((
         SELECT sp.price
         FROM ${constants.models.SHARE_PRICE_HISTORY_TABLE} sp
