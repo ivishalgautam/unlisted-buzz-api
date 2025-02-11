@@ -11,5 +11,5 @@ export default async function routes(fastify, opt) {
 }
 
 export async function commentPublicRoutes(fastify, opts) {
-  fastify.get("/getByShareId/:id", {}, controller.getByShareId);
+  fastify.get("/get-by-share-id/:id", {}, controller.getByShareId);
 }

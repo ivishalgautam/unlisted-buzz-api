@@ -38,6 +38,7 @@ const init = async (sequelize) => {
       comment_id: {
         type: DataTypes.UUID,
         allowNull: true,
+        onDelete: "CASCADE",
         references: {
           model: constants.models.COMMENT_TABLE,
           key: "id",
@@ -87,9 +88,15 @@ const getByShareId = async (req, id) => {
   const limit = req.query.limit ? Number(req.query.limit) : null;
   const offset = (page - 1) * limit;
 
-  const whereClause = `WHERE cmnt.share_id = :shareId AND cmnt.is_reply = FALSE`;
-  // const whereClause = `WHERE cmnt.share_id = :shareId`;
-  const queryParams = { shareId: req?.params?.id ?? id };
+  const whereClause = `
+    WHERE cmnt.share_id = :shareId 
+    AND cmnt.is_reply = false 
+    AND cmnt.is_reviewed = true
+  `;
+
+  const queryParams = {
+    shareId: req?.params?.id ?? id,
+  };
 
   let countQuery = `
   SELECT
@@ -101,19 +108,23 @@ const getByShareId = async (req, id) => {
 
   let query = `
   SELECT
-      cmnt.id, cmnt.comment, cmnt.created_at, cmnt.is_reviewed, cmnt.is_reply,
+      cmnt.id, cmnt.comment, cmnt.created_at, cmnt.is_reviewed, cmnt.is_reply, usr.fullname, usr.avatar,
       COALESCE(json_agg(
         json_build_object(
           'id', cmnt2.id,
           'comment', cmnt2.comment,
           'created_at', cmnt2.created_at,
-          'is_reviewed', cmnt2.is_reviewed
+          'is_reviewed', cmnt2.is_reviewed,
+          'fullname', rplyusr.fullname,
+          'avatar', rplyusr.avatar
         )
       ) FILTER(WHERE cmnt2.id IS NOT NULL), '[]') AS replies
     FROM ${constants.models.COMMENT_TABLE} cmnt
     LEFT JOIN ${constants.models.COMMENT_TABLE} cmnt2 ON cmnt.id = cmnt2.comment_id
+    LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = cmnt.user_id
+    LEFT JOIN ${constants.models.USER_TABLE} rplyusr ON rplyusr.id = cmnt2.user_id
     ${whereClause}
-    GROUP BY cmnt.id
+    GROUP BY cmnt.id, usr.fullname, usr.avatar
     ORDER BY cmnt.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
@@ -137,8 +148,8 @@ const get = async (req) => {
   let whereConditions = [];
   const queryParams = {};
 
-  const isReviewed = req.params.is_reviewed == 1 ? true : false;
-  if (req.params.is_reviewed) {
+  if (req.query.is_reviewed !== undefined && req.query.is_reviewed !== "all") {
+    const isReviewed = req.query.is_reviewed == "1";
     whereConditions.push(`cmnt.is_reviewed = :isReviewed`);
     queryParams.isReviewed = isReviewed;
   }

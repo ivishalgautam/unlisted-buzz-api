@@ -86,7 +86,6 @@ const get = async (req) => {
         COUNT(qr.id) OVER()::integer as total
       FROM ${constants.models.QUERY_TABLE} qr
       ${whereClause}
-      ORDER BY qr.created_at DESC
       `;
 
   let query = `

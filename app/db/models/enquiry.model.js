@@ -95,7 +95,6 @@ const get = async (req) => {
       FROM ${constants.models.ENQUIRY_TABLE} enq
       LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = enq.share_id
       ${whereClause}
-      ORDER BY shr.created_at DESC
       `;
 
   let query = `
@@ -104,7 +103,7 @@ const get = async (req) => {
       FROM ${constants.models.ENQUIRY_TABLE} enq
       LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = enq.share_id
       ${whereClause}
-      ORDER BY shr.created_at DESC
+      ORDER BY enq.created_at DESC
       LIMIT :limit OFFSET :offset
     `;
 
