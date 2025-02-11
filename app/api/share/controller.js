@@ -262,7 +262,9 @@ async function getFormattedShareDetails(req, res) {
         .on("data", async (data) => {
           console.log(JSON.stringify(data));
           for (const [key, value] of Object.entries(data)) {
-            results[key] = parseObj(value);
+            if (key && value) {
+              results[key] = parseObj(value);
+            }
           }
           // results = {
           //   fundamentals: JSON.parse(data.fundamentals),
