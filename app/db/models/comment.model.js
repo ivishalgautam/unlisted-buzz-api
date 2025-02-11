@@ -91,7 +91,7 @@ const getByShareId = async (req, id) => {
   const whereClause = `
     WHERE cmnt.share_id = :shareId 
     AND cmnt.is_reply = false 
-    AND cmnt.is_reviewed = true
+    AND cmnt.is_reviewed = true && cmnt2.is_reviewed = true
   `;
 
   const queryParams = {
