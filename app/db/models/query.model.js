@@ -1,6 +1,6 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk from "sequelize";
+import sequelizeFwk, { QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
 
 let QueryModel = null;
@@ -62,9 +62,55 @@ const create = async (req) => {
 };
 
 const get = async (req) => {
-  return await QueryModel.findAll({
-    order: [["created_at", "DESC"]],
+  let whereConditions = [];
+  const queryParams = {};
+  let q = req.query.q;
+  if (q) {
+    whereConditions.push(
+      `(qr.name ILIKE :query OR qr.email ILIKE :query OR qr.phone ILIKE :query OR qr.source ILIKE :query)`
+    );
+    queryParams.query = `%${q}%`;
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length > 0) {
+    whereClause = "WHERE " + whereConditions.join(" AND ");
+  }
+
+  let countQuery = `
+    SELECT
+        COUNT(qr.id) OVER()::integer as total
+      FROM ${constants.models.QUERY_TABLE} qr
+      ${whereClause}
+      ORDER BY qr.created_at DESC
+      `;
+
+  let query = `
+      SELECT
+        qr.*
+      FROM ${constants.models.QUERY_TABLE} qr
+      ${whereClause}
+      ORDER BY qr.created_at DESC
+      LIMIT :limit OFFSET :offset
+    `;
+
+  const data = await QueryModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
   });
+
+  const count = await QueryModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  return { queries: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getById = async (req, id) => {

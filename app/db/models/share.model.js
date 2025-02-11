@@ -100,7 +100,7 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`sct.name ILIKE :query`);
+    whereConditions.push(`(shr.name ILIKE :query OR sct.name ILIKE :query)`);
     queryParams.query = `%${q}%`;
   }
 
@@ -260,7 +260,6 @@ const getNewArrivals = async (req) => {
   let whereConditions = [];
   const queryParams = {};
   const timeRange = req.query.time_range ?? "15d";
-  console.log({ timeRange });
   if (timeRange) {
     const [value, unit] = [parseInt(timeRange), timeRange.replace(/\d+/g, "")];
 
@@ -477,7 +476,25 @@ const countShares = async (last_30_days = false) => {
   }
 
   return await ShareModel.count({
-    where: where_query,
+    where: { ...where_query, is_ipo: false },
+    raw: true,
+  });
+};
+
+const countIPOs = async (last_30_days = false) => {
+  let where_query;
+  if (last_30_days) {
+    where_query = {
+      created_at: {
+        [Op.gte]: moment()
+          .subtract(30, "days")
+          .format("YYYY-MM-DD HH:mm:ss.SSSZ"),
+      },
+    };
+  }
+
+  return await ShareModel.count({
+    where: { ...where_query, is_ipo: true },
     raw: true,
   });
 };
@@ -494,4 +511,5 @@ export default {
   countShares: countShares,
   getNewArrivals: getNewArrivals,
   getChartByShareId: getChartByShareId,
+  countIPOs: countIPOs,
 };

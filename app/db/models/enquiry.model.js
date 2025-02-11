@@ -1,12 +1,12 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk, { Deferrable } from "sequelize";
+import sequelizeFwk, { Deferrable, QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
 
-let QueryModel = null;
+let EnquiryModel = null;
 
 const init = async (sequelize) => {
-  QueryModel = sequelize.define(
+  EnquiryModel = sequelize.define(
     constants.models.ENQUIRY_TABLE,
     {
       id: {
@@ -52,11 +52,11 @@ const init = async (sequelize) => {
     }
   );
 
-  await QueryModel.sync({ alter: true });
+  await EnquiryModel.sync({ alter: true });
 };
 
 const create = async (req) => {
-  return await QueryModel.create({
+  return await EnquiryModel.create({
     transaction_type: req.body.transaction_type,
     share_id: req.body.share_id,
     quantity: req.body.quantity,
@@ -66,13 +66,65 @@ const create = async (req) => {
 };
 
 const get = async (req) => {
-  return await QueryModel.findAll({
-    order: [["created_at", "DESC"]],
+  let whereConditions = [];
+  const queryParams = {};
+  let q = req.query.q;
+  if (q) {
+    whereConditions.push(`shr.name ILIKE :query`);
+    queryParams.query = `%${q}%`;
+  }
+
+  let transactionType = req.query.type ? req.query.type.split(".") : "";
+  if (transactionType) {
+    whereConditions.push(`enq.transaction_type = ANY(:type)`);
+    queryParams.type = `{${transactionType.join(",")}}`;
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length > 0) {
+    whereClause = "WHERE " + whereConditions.join(" AND ");
+  }
+
+  let countQuery = `
+    SELECT
+        COUNT(shr.id) OVER()::integer as total
+      FROM ${constants.models.ENQUIRY_TABLE} enq
+      LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = enq.share_id
+      ${whereClause}
+      ORDER BY shr.created_at DESC
+      `;
+
+  let query = `
+      SELECT
+        enq.*
+      FROM ${constants.models.ENQUIRY_TABLE} enq
+      LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = enq.share_id
+      ${whereClause}
+      ORDER BY shr.created_at DESC
+      LIMIT :limit OFFSET :offset
+    `;
+
+  const data = await EnquiryModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
   });
+
+  const count = await EnquiryModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  return { enquiries: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getById = async (req, id) => {
-  return await QueryModel.findOne({
+  return await EnquiryModel.findOne({
     where: {
       id: req.params.id || id,
     },
@@ -80,7 +132,7 @@ const getById = async (req, id) => {
 };
 
 const deleteById = async (req, id) => {
-  return await QueryModel.destroy({
+  return await EnquiryModel.destroy({
     where: { id: req.params.id || id },
   });
 };
