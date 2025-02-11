@@ -91,7 +91,7 @@ const getByShareId = async (req, id) => {
   const whereClause = `
     WHERE cmnt.share_id = :shareId 
     AND cmnt.is_reply = false 
-    AND cmnt.is_reviewed = true && cmnt2.is_reviewed = true
+    AND cmnt.is_reviewed = true
   `;
 
   const queryParams = {
@@ -120,7 +120,7 @@ const getByShareId = async (req, id) => {
         )
       ) FILTER(WHERE cmnt2.id IS NOT NULL), '[]') AS replies
     FROM ${constants.models.COMMENT_TABLE} cmnt
-    LEFT JOIN ${constants.models.COMMENT_TABLE} cmnt2 ON cmnt.id = cmnt2.comment_id
+    LEFT JOIN ${constants.models.COMMENT_TABLE} cmnt2 ON cmnt.id = cmnt2.comment_id AND cmnt2.is_reviewed = true
     LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = cmnt.user_id
     LEFT JOIN ${constants.models.USER_TABLE} rplyusr ON rplyusr.id = cmnt2.user_id
     ${whereClause}
