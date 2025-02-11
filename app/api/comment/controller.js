@@ -3,7 +3,6 @@ import constants from "../../lib/constants/index.js";
 import table from "../../db/models.js";
 import { sequelize } from "../../db/postgres.js";
 import { commentSchema } from "../../validation-schemas/comment.schema.js";
-import jwtVerify from "../../helpers/auth.js";
 
 const { NOT_FOUND } = constants.http.status;
 

@@ -46,7 +46,10 @@ const init = async (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          max: 2147483647,
+          max: {
+            args: 2147483647,
+            msg: "Quantity must be less then 2147483647",
+          },
           min: -2147483648,
         },
       },
