@@ -261,22 +261,11 @@ async function getFormattedShareDetails(req, res) {
         .pipe(csv())
         .on("data", async (data) => {
           for (const [key, value] of Object.entries(data)) {
-            console.log({ key, value });
-            if (String(key).trim() !== "" && String(value).trim() !== "") {
+            if (key && value) {
               results[key] =
-                key === "peer_ratio"
-                  ? parseObj(value)
-                  : JSON.parse(JSON.stringify(value));
+                key === "peer_ratio" ? parseObj(value) : JSON.parse(value);
             }
           }
-          // results = {
-          //   fundamentals: JSON.parse(data.fundamentals),
-          //   shareholding_patterns: JSON.parse(data.shareholding_patterns),
-          //   peer_ratio: parseObj(data.peer_ratio),
-          //   financials: JSON.parse(data.financials),
-          //   faqs: JSON.parse(data.faqs),
-          //   promoters_or_management: JSON.parse(data.promoters_or_management),
-          // };
         })
         .on("end", () => {
           resolve();
