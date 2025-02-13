@@ -53,7 +53,8 @@ const updateById = async (req, res) => {
         .code(NOT_FOUND)
         .send({ status: false, message: "Share not found!" });
     }
-    await table.ShareModel.update(req, 0, { transaction });
+    const updateShare = await table.ShareModel.update(req, 0, { transaction });
+    console.log(updateShare);
 
     let ipo = await table.IPOModel.getByShareId(0, share.id);
     if (req.body.name) {
