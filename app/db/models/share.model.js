@@ -379,6 +379,7 @@ const update = async (req, id, { transaction }) => {
       shareholding_patterns: req.body.shareholding_patterns,
       peer_ratio: req.body.peer_ratio,
       financials: req.body.financials,
+      promoters_or_management: req.body.promoters_or_management,
       faqs: req.body.faqs,
       price: req.body.price,
       current_market_price: req.body.current_market_price,

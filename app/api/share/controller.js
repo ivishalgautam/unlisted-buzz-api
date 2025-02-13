@@ -262,8 +262,9 @@ async function getFormattedShareDetails(req, res) {
         .on("data", async (data) => {
           for (const [key, value] of Object.entries(data)) {
             if (key && value) {
-              results[key] =
-                key === "peer_ratio" ? parseObj(value) : JSON.parse(value);
+              console.log({ key, value });
+              // results[key] =
+              //   key === "peer_ratio" ? parseObj(value) : JSON.parse(value);
             }
           }
         })
