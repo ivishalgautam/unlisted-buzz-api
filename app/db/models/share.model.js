@@ -48,6 +48,7 @@ const init = async (sequelize) => {
       peer_ratio: { type: DataTypes.JSONB, defaultValue: {} },
       financials: { type: DataTypes.JSONB, defaultValue: [] },
       faqs: { type: DataTypes.JSONB, defaultValue: [] },
+      events: { type: DataTypes.ARRAY(DataTypes.UUID), defaultValue: [] },
       price: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -99,6 +100,7 @@ const create = async (req, { transaction }) => {
       current_market_price: req.body.current_market_price,
       promoters_or_management: req.body.promoters_or_management,
       is_drhp_filed: req.body.is_drhp_filed,
+      events: req.body.events,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -384,6 +386,7 @@ const update = async (req, id, { transaction }) => {
       price: req.body.price,
       current_market_price: req.body.current_market_price,
       is_drhp_filed: req.body.is_drhp_filed,
+      events: req.body.events,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -411,7 +414,6 @@ const getById = async (req, id) => {
     LEFT JOIN ${constants.models.IPO_TABLE} ipo ON ipo.share_id = shr.id
     WHERE shr.id = :shareId
   `;
-  console.log(query);
   return await ShareModel.sequelize.query(query, {
     type: QueryTypes.SELECT,
     replacements: { shareId: req?.params?.id || id },
