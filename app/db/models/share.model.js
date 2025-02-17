@@ -403,10 +403,18 @@ const update = async (req, id, { transaction }) => {
 };
 
 const getById = async (req, id) => {
-  return await ShareModel.findOne({
-    where: {
-      id: req?.params?.id || id,
-    },
+  const query = `
+  SELECT
+      shr.*,
+      ipo.ipo_price
+    FROM ${constants.models.SHARE_TABLE} shr
+    LEFT JOIN ${constants.models.IPO_TABLE} ipo ON ipo.share_id = shr.id
+    WHERE shr.id = :shareId
+  `;
+  console.log(query);
+  return await ShareModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    replacements: { shareId: req?.params?.id || id },
     raw: true,
     plain: true,
   });
