@@ -68,7 +68,7 @@ const init = async (sequelize) => {
       promoters_or_management: { type: DataTypes.JSONB, defaultValue: [] },
       is_ipo: { type: DataTypes.BOOLEAN, defaultValue: false },
       is_drhp_filed: { type: DataTypes.BOOLEAN, defaultValue: false },
-      min_quantity: { type: DataTypes.INTEGER, defaultValue: 0 },
+      min_quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },

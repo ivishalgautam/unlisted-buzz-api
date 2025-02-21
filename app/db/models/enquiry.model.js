@@ -122,7 +122,8 @@ const get = async (req) => {
 
   let query = `
       SELECT
-        enq.*
+        enq.*,
+        shr.name as share_name
       FROM ${constants.models.ENQUIRY_TABLE} enq
       LEFT JOIN ${constants.models.SHARE_TABLE} shr ON shr.id = enq.share_id
       ${whereClause}
