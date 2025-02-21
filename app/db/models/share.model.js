@@ -182,6 +182,7 @@ const get = async (req) => {
       COUNT(shr.id) OVER()::integer as total
     FROM ${constants.models.SHARE_TABLE} shr
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = shr.sector_id
+    LEFT JOIN ${constants.models.IPO_TABLE} ipo ON ipo.share_id = shr.id
     ${whereClause}
     GROUP BY
         shr.id
@@ -249,12 +250,14 @@ const get = async (req) => {
       WHERE sp.share_id = shr.id
       ORDER BY sp.created_at ASC
       LIMIT 1) AS first_price,
-      sct.name as sector_name
+      sct.name as sector_name,
+      ipo.ipo_price
     FROM ${constants.models.SHARE_TABLE} shr
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = shr.sector_id
+    LEFT JOIN ${constants.models.IPO_TABLE} ipo ON ipo.share_id = shr.id
     ${whereClause}
     GROUP BY
-      shr.id, sct.name
+      shr.id, sct.name, ipo.ipo_price
     ORDER BY shr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
