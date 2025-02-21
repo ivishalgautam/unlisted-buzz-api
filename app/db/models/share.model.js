@@ -482,6 +482,7 @@ const getBySlug = async (req, slug) => {
   const query = `
   SELECT
       shr.*,
+      COALESCE(
       json_agg(
         json_build_object(
           'id', evn.id,
@@ -490,7 +491,7 @@ const getBySlug = async (req, slug) => {
           'date', evn.date,
           'details', evn.details
         )
-      ) as events
+      ) FILTER(WHERE evn.id IS NOT NULL), '[]') as events
     FROM ${constants.models.SHARE_TABLE} shr
     LEFT JOIN ${constants.models.EVENT_TABLE} evn ON evn.id = ANY(shr.events)
     WHERE shr.slug = :slug
