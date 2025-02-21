@@ -53,6 +53,18 @@ const init = async (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       createdAt: "created_at",
@@ -70,6 +82,9 @@ const create = async (req) => {
     quantity: req.body.quantity,
     price_per_share: req.body.price_per_share,
     message: req.body.message,
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
   });
 };
 

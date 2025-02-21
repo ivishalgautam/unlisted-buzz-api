@@ -25,6 +25,8 @@ const create = async (req, res) => {
 };
 
 const updateById = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
     let slug = "";
     if (req.body.name) {
@@ -48,11 +50,14 @@ const updateById = async (req, res) => {
           message: "Event exist with this name!",
         });
     }
+    const data = await table.EventModel.update(req, 0, { transaction });
+    await transaction.commit();
     res.send({
       status: true,
-      data: await table.EventModel.update(req),
+      data: data,
     });
   } catch (error) {
+    await transaction.rollback();
     throw error;
   }
 };
@@ -117,7 +122,7 @@ const deleteById = async (req, res) => {
       }
     );
 
-    if (isEventDeleted) {
+    if (isEventDeleted && record?.details) {
       deleteFile(record?.details);
     }
 
