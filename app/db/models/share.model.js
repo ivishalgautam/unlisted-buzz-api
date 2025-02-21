@@ -473,11 +473,32 @@ const getByPk = async (req, id) => {
 };
 
 const getBySlug = async (req, slug) => {
-  return await ShareModel.findOne({
-    where: {
+  const query = `
+  SELECT
+      shr.*,
+      json_agg(
+        json_build_object(
+          'id', evn.id,
+          'name', evn.name,
+          'description', evn.description,
+          'date', evn.date,
+          'details', evn.details
+        )
+      ) as events
+    FROM ${constants.models.SHARE_TABLE} shr
+    LEFT JOIN ${constants.models.EVENT_TABLE} evn ON evn.id = ANY(shr.events)
+    WHERE shr.slug = :slug
+    GROUP BY shr.id
+  `;
+
+  return await ShareModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    replacements: {
       slug: req.params?.slug || slug,
     },
+
     raw: true,
+    plain: true,
   });
 };
 
