@@ -52,6 +52,14 @@ const init = async (sequelize) => {
           msg: "Email address already in use!",
         },
       },
+      mobile_number: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: {
+          args: true,
+          msg: "Mobile number already in use!",
+        },
+      },
       is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
@@ -94,8 +102,9 @@ const create = async (req, { transaction }) => {
     {
       fullname: req.body.fullname,
       email: req.body.email,
-      // mobile_number: req.body?.mobile_number,
+      mobile_number: req.body?.mobile_number,
       country_code: req.body.country_code,
+      dob: req.body.dob,
       role: req.body.role,
     },
     { transaction }
@@ -196,12 +205,12 @@ const getByPk = async (req, id) => {
 };
 
 const update = async (req, id, { transaction }) => {
+  console.log(req.body);
   const [rowCount, rows] = await UserModel.update(
     {
       fullname: req.body?.fullname,
       email: req.body?.email,
       mobile_number: req.body?.mobile_number,
-      country_code: req.body?.country_code,
       dob: req.body?.dob,
       avatar: req.body?.avatar,
     },
