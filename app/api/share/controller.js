@@ -14,7 +14,10 @@ import { parseObj } from "../../helpers/parse-object.js";
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    let slug = slugify(req.body.name, { lower: true });
+    let slug = slugify(req.body.name, {
+      lower: true,
+      remove: /['"]/g, // Remove apostrophes and quotes
+    });
     req.body.slug = slug;
 
     const share = await table.ShareModel.create(req, { transaction });
@@ -43,7 +46,10 @@ const updateById = async (req, res) => {
   try {
     let slug = "";
     if (req.body.name) {
-      slug = slugify(req.body?.name, { lower: true });
+      slug = slugify(req.body?.name, {
+        lower: true,
+        remove: /['"]/g, // Remove apostrophes and quotes
+      });
       req.body.slug = slug;
     }
 

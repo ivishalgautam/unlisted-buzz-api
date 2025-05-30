@@ -4,7 +4,10 @@ import table from "../../db/models.js";
 
 const create = async (req, res) => {
   try {
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
+    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+      lower: true,
+      remove: /['"]/g, // Remove apostrophes and quotes
+    });
     res.send(await table.BlogModel.create(req));
   } catch (error) {
     console.error(error);
@@ -17,7 +20,10 @@ const update = async (req, res) => {
     const record = await table.BlogModel.getById(req);
     if (!record) return res.code(404).send({ message: "Blog not found!" });
 
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
+    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+      lower: true,
+      remove: /['"]/g, // Remove apostrophes and quotes
+    });
     res.send(await table.BlogModel.update(req));
   } catch (error) {
     console.error(error);
