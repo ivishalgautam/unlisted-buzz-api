@@ -11,14 +11,18 @@ import fs from "fs";
 import csv from "csv-parser";
 import { parseObj } from "../../helpers/parse-object.js";
 
+const trim = (str) => {
+  return String(str).substring(0, 70);
+};
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     let slug = slugify(req.body.name, {
       lower: true,
+      strict: true,
       remove: /['"]/g, // Remove apostrophes and quotes
     });
-    req.body.slug = slug;
+    req.body.slug = trim(slug);
 
     const share = await table.ShareModel.create(req, { transaction });
     if (share) {
@@ -48,9 +52,10 @@ const updateById = async (req, res) => {
     if (req.body.name) {
       slug = slugify(req.body?.name, {
         lower: true,
+        strict: true,
         remove: /['"]/g, // Remove apostrophes and quotes
       });
-      req.body.slug = slug;
+      req.body.slug = trim(slug);
     }
 
     const share = await table.ShareModel.getById(req);
@@ -60,7 +65,6 @@ const updateById = async (req, res) => {
         .send({ status: false, message: "Share not found!" });
     }
     const updateShare = await table.ShareModel.update(req, 0, { transaction });
-    console.log(updateShare);
 
     let ipo = await table.IPOModel.getByShareId(0, share.id);
     if (req.body.name) {
