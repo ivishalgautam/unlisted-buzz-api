@@ -2,12 +2,18 @@
 import slugify from "slugify";
 import table from "../../db/models.js";
 
+const trim = (str) => {
+  return String(str).substring(0, 70);
+};
+
 const create = async (req, res) => {
   try {
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+    const slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
       lower: true,
+      strict: true,
       remove: /['"]/g, // Remove apostrophes and quotes
     });
+    req.body.slug = trim(slug);
     res.send(await table.BlogModel.create(req));
   } catch (error) {
     console.error(error);
@@ -20,10 +26,12 @@ const update = async (req, res) => {
     const record = await table.BlogModel.getById(req);
     if (!record) return res.code(404).send({ message: "Blog not found!" });
 
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+    const slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
       lower: true,
+      strict: true,
       remove: /['"]/g, // Remove apostrophes and quotes
     });
+    req.body.slug = trim(slug);
     res.send(await table.BlogModel.update(req));
   } catch (error) {
     console.error(error);
